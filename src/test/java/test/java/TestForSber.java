@@ -105,7 +105,7 @@ public class TestForSber {
 	 * Тест проверяет конвертацию валют. Данные используются из файла convertation_test_data.csv
 	 */
 	@Test
-	public void testConvertationofCurrency() {
+	public void testConvertCurrencies() {
 		/**
 		 * Извлечение конкретных параметров в отдельные переменные:
 		 * @money - количество денег
@@ -243,13 +243,13 @@ public class TestForSber {
 	
 	
 	@Test
-	public void tes2()
+	public void testDinamicCurrencyChanges()
 	{
 		String[] parameter = currentParametr.split(";");
 		String dataFrom = parameter[8];
 		String dataTo = parameter[9];
 		/*
-		 * Открыть окно динамиука изменения курсов 
+		 * Открыть окно динамика изменения курсов 
 		 */
 		try {
 			WebElement curencyChangesDinamicEl = driver.findElement(By.cssSelector(".rates-tabs > li:nth-child(1)")); 
@@ -263,14 +263,14 @@ public class TestForSber {
 		 */
 		
 		WebElement dataFromInputEl = driver.findElement(By.cssSelector("div.filter-datepicker:nth-child(2) > input:nth-child(1)"));
-		setDate(dataFromInputEl, dataFrom);
+		setDateInElement(dataFromInputEl, dataFrom);
 		
 		
 		/*
 		 * Найти элемент, в котором выбирается конечная дата и установить её
 		 */
 		WebElement dataToEl = driver.findElement(By.cssSelector("div.filter-datepicker:nth-child(4) > input:nth-child(1)"));
-		setDate(dataToEl, dataTo);
+		setDateInElement(dataToEl, dataTo);
 		
 		WebElement backgroundEl = driver.findElement(By.cssSelector(".base-grid-3 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)"));
 		backgroundEl.click();
@@ -302,7 +302,7 @@ public class TestForSber {
 	}
 	
 	@Test
-	public void test3(){
+	public void testExtendedTableOfCurrencies(){
 		
 		/*
 		 * Получить дату из параметра
@@ -320,7 +320,7 @@ public class TestForSber {
 		 * Найти элемент, в котором выбирается дата и установить её
 		 */
 		WebElement dateEl = driver.findElement(By.cssSelector(".hasDatepicker"));
-		setDate(dateEl, data);
+		setDateInElement(dateEl, data);
 		
 		/*
 		 * Показать результат
@@ -336,9 +336,9 @@ public class TestForSber {
 	}
 	
 	/*
-	 * Установить дату в определенный элемент
+	 * Метод устанавливает дату в определенный элемент
 	 */
-	private void setDate(WebElement dataEl, String dateString) {
+	private void setDateInElement(WebElement dataEl, String dateString) {
 		dataEl.clear();
 		try {
 			Thread.sleep(2000);
@@ -358,7 +358,7 @@ public class TestForSber {
 	}
 	
 	/*
-	 * Получить тестовые данные из файла
+	 * Метод получает тестовые данные из файла в виде коллекции строк
 	 */
     public static Collection<String[]> getTestData(String fileName) throws IOException {
         List<String[]> records = new ArrayList<String[]>();
