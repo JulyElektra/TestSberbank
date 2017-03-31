@@ -1,3 +1,4 @@
+package test.java;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -66,7 +67,7 @@ public class TestForSber {
 		packagesOfServicesMap.put("Premier", 3);
 		packagesOfServicesMap.put("Sberbank is the first", 4);
 	}
-	
+
 	static {
 		timesMap.put("Current", 2);
 		timesMap.put("Custom", 3);
