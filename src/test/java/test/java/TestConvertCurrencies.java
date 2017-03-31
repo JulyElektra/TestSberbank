@@ -1,26 +1,33 @@
 package test.java;
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import other.DataExtractor;
 
 @RunWith(value = Parameterized.class)
-public class TestForSber {
+public class TestConvertCurrencies {
 	static WebDriver driver;
+	
+	/**
+	 * @currentParametr - Текущий параметр в выполняемом тестировании
+	 */
+    private String currentParametr;
 	
 	/*
 	 * Данные полученные через переменные типа HashMap будут использованы для css selector
@@ -30,11 +37,6 @@ public class TestForSber {
 	static HashMap<String, Integer> exchangeMethodsMap = new HashMap<>();
 	static HashMap<String, Integer> packagesOfServicesMap = new HashMap<>();
 	static HashMap<String, Integer> timesMap = new HashMap<>();
-	
-	/**
-	 * @currentParametr - Текущий параметр в выполняемом тестировании
-	 */
-    private String currentParametr;
 	
 	/*
 	 * Заполнение HashMap значениями
@@ -73,21 +75,21 @@ public class TestForSber {
 		timesMap.put("Custom", 3);
 	}
 	
+	
 	/**
 	 * Constructor	
 	 * @param currentParametr
 	 */
-	public TestForSber(String currentParametr) {
+	public TestConvertCurrencies(String currentParametr) {
 		this.currentParametr = currentParametr;
 	}
-
-
+	
     @Parameters
     public static Collection<String[]> testData() throws IOException {
-    	return getTestData("convertation_test_data.csv"); // 
+    	return DataExtractor.getTestData("convertation_test_data.csv"); // 
     }
      
-	
+    
 	@Before
 	public void set() {
 		File file = new File("lib/selenium-java-3.3.1/chromedriver.exe");
@@ -99,7 +101,6 @@ public class TestForSber {
 		 */
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
-
 	
 	/*
 	 * Тест проверяет конвертацию валют. Данные используются из файла convertation_test_data.csv
@@ -241,138 +242,6 @@ public class TestForSber {
 		
 	}
 	
-	
-	@Test
-	public void testDinamicCurrencyChanges()
-	{
-		String[] parameter = currentParametr.split(";");
-		String dataFrom = parameter[8];
-		String dataTo = parameter[9];
-		/*
-		 * Открыть окно динамика изменения курсов 
-		 */
-		try {
-			WebElement curencyChangesDinamicEl = driver.findElement(By.cssSelector(".rates-tabs > li:nth-child(1)")); 
-			curencyChangesDinamicEl.click();
-		} catch (NoSuchElementException e){
-			e.printStackTrace(); 
-		}
-		
-		/*
-		 * Найти элемент, в котором выбирается начальная дата и установить её
-		 */
-		
-		WebElement dataFromInputEl = driver.findElement(By.cssSelector("div.filter-datepicker:nth-child(2) > input:nth-child(1)"));
-		setDateInElement(dataFromInputEl, dataFrom);
-		
-		
-		/*
-		 * Найти элемент, в котором выбирается конечная дата и установить её
-		 */
-		WebElement dataToEl = driver.findElement(By.cssSelector("div.filter-datepicker:nth-child(4) > input:nth-child(1)"));
-		setDateInElement(dataToEl, dataTo);
-		
-		WebElement backgroundEl = driver.findElement(By.cssSelector(".base-grid-3 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)"));
-		backgroundEl.click();
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		
-		/*
-		 * Показать результат
-		 */
-		try {
-			WebElement showEl = driver.findElement(By.cssSelector("div.rates-details-period-datepicker-line:nth-child(2)"));
-			showEl.click();
-		} catch (WebDriverException e) {
-			System.out.println("Button show do not loaded yet.");
-			e.printStackTrace();
-		}
-
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testExtendedTableOfCurrencies(){
-		
-		/*
-		 * Получить дату из параметра
-		 */
-		String[] parameter = currentParametr.split(";");
-		String data = parameter[10];
-		
-		/*
-		 * Найти элемент Расширеная таблица курсов и открыть её
-		 */
-		WebElement extendedTableEl = driver.findElement(By.cssSelector(".rates-tabs > li:nth-child(2) > span:nth-child(1)"));
-		extendedTableEl.click();
-		
-		/*
-		 * Найти элемент, в котором выбирается дата и установить её
-		 */
-		WebElement dateEl = driver.findElement(By.cssSelector(".hasDatepicker"));
-		setDateInElement(dateEl, data);
-		
-		/*
-		 * Показать результат
-		 */
-		WebElement showEl = driver.findElement(By.cssSelector(".button"));
-		showEl.click();
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/*
-	 * Метод устанавливает дату в определенный элемент
-	 */
-	private void setDateInElement(WebElement dataEl, String dateString) {
-		dataEl.clear();
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {			
-			e.printStackTrace();
-		}
-		
-		/*
-		 * Удалить дату по умолчанию
-		 */
-		for (int i = 0; i < 10; i++) {
-			dataEl.sendKeys(Keys.BACK_SPACE);
-		}
-		
-		dataEl.sendKeys(dateString, Keys.ENTER); // 
-		
-	}
-	
-	/*
-	 * Метод получает тестовые данные из файла в виде коллекции строк
-	 */
-    public static Collection<String[]> getTestData(String fileName) throws IOException {
-        List<String[]> records = new ArrayList<String[]>();
-        String record;
-        BufferedReader file = new BufferedReader(new FileReader(fileName));
-        while ((record = file.readLine()) != null) {
-            String[] fields = record.split(",");
-            records.add(fields);
-        }
-        file.close();
-        return records;
-    }
-
-
 	@After
 	public void tearDown() throws Exception {
 	    driver.quit();
